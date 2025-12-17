@@ -10,6 +10,7 @@ const messageRoutes = require("./routes/message");
 const leaveRoutes = require("./routes/leave");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const uploadRoutes = require("./routes/upload");
+const noticesRoutes = require("./routes/noticeRoutes");
 
 const app = express();
 const server = http.createServer(app); // ✅ create http server for socket
@@ -22,18 +23,16 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/leave", leaveRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/notices", noticesRoutes);
 
-app.get("/api/ip", async (req, res) => {
-  try {
-    const response = await fetch("https://api.ipify.org?format=json");
-    const data = await response.json();
 
-    res.json({ ip: data.ip });
-  } catch (err) {
-    res.status(500).json({ ip: null, error: "Failed to fetch IP" });
-  }
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "Server is awake",
+    time: new Date().toISOString(),
+  });
 });
-
 
 const startServer = async () => {
   try {
@@ -48,7 +47,9 @@ const startServer = async () => {
     // ✅ Socket.io setup
     const io = new Server(server, {
       cors: {
-        origin: "https://team-chat-ym6h.vercel.app", // change to your frontend URL in production
+        //origin: "https://team-chat-ym6h.vercel.app", // change to your 
+        //frontend URL in production
+        origin: "*",
         methods: ["GET", "POST"],
         credentials: true,
       },
