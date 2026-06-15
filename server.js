@@ -4,7 +4,6 @@ const cors = require("cors");
 require("dotenv").config();
 const { Server } = require("socket.io");
 const http = require("http");
-
 const authRoutes = require("./routes/auth");
 const messageRoutes = require("./routes/message");
 const leaveRoutes = require("./routes/leave");

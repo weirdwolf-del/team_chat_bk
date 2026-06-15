@@ -5,7 +5,15 @@ const bcrypt = require("bcryptjs");
 
 // Register
 router.post("/register", async (req, res) => {
-  const { name, username, email, mobile, password } = req.body;
+  const { name,
+    username,
+    email,
+    mobile,
+    password,
+    department,
+    designation,
+    joiningDate,
+    salary } = req.body;
 
   try {
     const userExists = await User.findOne({ username });
@@ -13,7 +21,7 @@ router.post("/register", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new User({ name, username, email, mobile, password: hashedPassword });
+    const user = new User({ name, username, email, mobile, password: hashedPassword, department, designation, joiningDate, salary });
     await user.save();
 
     res.status(201).json({ message: "User registered successfully", user });
@@ -43,6 +51,15 @@ router.get("/employees", async (req, res) => {
   try {
     const users = await User.find().select("-password"); // Exclude passwords
     res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+//Employee count
+router.get("/employee-count", async (req, res) => {
+  try {
+    const count = await User.countDocuments();
+    res.json({ count });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }

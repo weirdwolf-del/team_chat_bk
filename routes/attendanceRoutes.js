@@ -1,5 +1,6 @@
 const express = require("express");
 const Attendance = require("../models/Attendance.js");
+const AttendanceLog = require("../models/AttendanceLog.js");
 
 const router = express.Router();
 
@@ -7,7 +8,7 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   try {
     const { userId, name, date, duration, checkInTime, checkOutTime } = req.body;
-    //console.log("📥 Attendance data received:", req.body);
+    console.log("📥 Attendance data received:", req.body);
 
     if (!userId || !name || !date) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -59,6 +60,68 @@ router.get("/", async (req, res) => {
   } catch (err) {
     console.error("❌ Error fetching attendance:", err);
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+// 👇 Check-in only log (does NOT affect checkout system)
+router.post("/checkin-log", async (req, res) => {
+  try {
+    const { userId, name, date, checkInTime } = req.body;
+
+    if (!userId || !date) {
+      return res.status(400).json({
+        message: "Missing required fields"
+      });
+    }
+
+    // prevent duplicate check-in for same day
+    const already = await AttendanceLog.findOne({
+      userId,
+      date
+    });
+
+    if (already) {
+      return res.status(200).json({
+        message: "Already checked in today"
+      });
+    }
+
+    const log = await AttendanceLog.create({
+      userId,
+      name,
+      date,
+      checkInTime
+    });
+
+    res.json({
+      success: true,
+      log
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error"
+    });
+  }
+});
+// 👇 Get today's present employees + count
+router.get("/checkin-log/today", async (req, res) => {
+  try {
+    const today = new Date().toLocaleDateString("en-GB");
+
+    // get all present employees today
+    const records = await AttendanceLog.find({ date: today });
+
+    res.json({
+      success: true,
+      count: records.length,
+      data: records
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error"
+    });
   }
 });
 
