@@ -23,7 +23,9 @@ const attendanceSchema = new mongoose.Schema({
     required: false,
     type: Number,
     default: 0
-  }
+  },
+  
+  autoCheckout: { type: Boolean, default: false }
 
 
 });

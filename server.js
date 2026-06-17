@@ -11,6 +11,7 @@ const attendanceRoutes = require("./routes/attendanceRoutes");
 const uploadRoutes = require("./routes/upload");
 const noticesRoutes = require("./routes/noticeRoutes");
 const notificationRoutes = require("./routes/notifications");
+const autoCheckout = require("./cron/autocheckout")
 
 const app = express();
 const server = http.createServer(app); // ✅ create http server for socket
@@ -41,7 +42,10 @@ const startServer = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("✅ MongoDB connected");
 
+    // Server start hone ke baad cron start karo
+    autoCheckout();
 
+    console.log("✅ Cron jobs started");
 
     const PORT = process.env.PORT || 5000;
     server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
