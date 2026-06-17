@@ -65,4 +65,36 @@ router.get("/employee-count", async (req, res) => {
   }
 });
 
+// PUT /auth/update/:userId
+router.put("/update/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { salary, designation } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: { salary, designation } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      message: "Updated successfully",
+      user: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        salary: updatedUser.salary,
+        designation: updatedUser.designation,
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;

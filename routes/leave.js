@@ -26,7 +26,7 @@ router.post("/apply", async (req, res) => {
 
 // ---------------------------
 // Get leaves
-// GET /api/leave?userId=xxx&role=xxx
+// GET /api/leave?userId=123&role=employee
 // ---------------------------
 router.get("/", async (req, res) => {
   try {

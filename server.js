@@ -10,6 +10,7 @@ const leaveRoutes = require("./routes/leave");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const uploadRoutes = require("./routes/upload");
 const noticesRoutes = require("./routes/noticeRoutes");
+const notificationRoutes = require("./routes/notifications");
 
 const app = express();
 const server = http.createServer(app); // ✅ create http server for socket
@@ -23,6 +24,8 @@ app.use("/api/leave", leaveRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/notices", noticesRoutes);
+app.use("/api/notifications", notificationRoutes);
+
 
 
 app.get("/health", (req, res) => {
@@ -38,7 +41,7 @@ const startServer = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("✅ MongoDB connected");
 
-    
+
 
     const PORT = process.env.PORT || 5000;
     server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
